@@ -1,12 +1,15 @@
 export function formatNumber(value: number): string {
-  return new Intl.NumberFormat("en-US", { notation: value >= 10000 ? "compact" : "standard", maximumFractionDigits: 1 }).format(value);
+  const safe = Number.isFinite(value) ? value : 0;
+  return new Intl.NumberFormat("en-US", { notation: Math.abs(safe) >= 10000 ? "compact" : "standard", maximumFractionDigits: 1 }).format(safe);
 }
 export function formatDuration(value: number): string {
-  if (!value) return "0 ms";
-  if (value < 1000) return `${Math.round(value)} ms`;
-  return `${(value / 1000).toFixed(value >= 10000 ? 0 : 1)} s`;
+  const safe = Number.isFinite(value) && value > 0 ? value : 0;
+  if (safe < 1000) return `${Math.round(safe)} ms`;
+  return `${(safe / 1000).toFixed(safe >= 10000 ? 0 : 1)} s`;
 }
 export function formatDate(value: string | null): string {
   if (!value) return "Never";
-  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(value));
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return "Invalid date";
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }).format(date);
 }
