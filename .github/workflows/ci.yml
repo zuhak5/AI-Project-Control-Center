@@ -1,21 +1,30 @@
 name: CI
+
 on:
   push:
     branches: [main]
   pull_request:
+
 permissions:
   contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
       - name: Install dependencies
         run: npm install --no-audit --no-fund
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
       - name: Lint
         run: npm run lint
       - name: Typecheck
@@ -24,8 +33,9 @@ jobs:
         run: npm test
       - name: Production build
         env:
+          APP_BASE_URL: https://ai-project-control-center.vercel.app
           SESSION_SECRET: ci-session-secret-with-more-than-thirty-two-characters
-          DEV_BYPASS_AUTH: "true"
+          ALLOWED_GITHUB_LOGINS: zuhak5
           GATEWAY_BASE_URL: https://homepilot-ai.shares.zrok.io/v1
           GATEWAY_MODEL: gpt-5.4-mini
         run: npm run build
