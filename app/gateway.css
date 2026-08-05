@@ -1,0 +1,19 @@
+/* HomePilot single-gateway console */
+.chain-panel { overflow: hidden; }
+.gateway-chain { display: flex; align-items: stretch; gap: 10px; overflow-x: auto; padding: 8px 0 4px; }
+.chain-fragment { display: flex; align-items: center; gap: 10px; min-width: max-content; }
+.chain-node { display: flex; gap: 12px; align-items: center; min-width: 180px; padding: 16px; border: 1px solid var(--border); border-radius: 14px; background: var(--panel-soft); }
+.chain-node strong, .chain-node small { display: block; }
+.chain-node small { color: var(--muted); margin-top: 3px; max-width: 190px; }
+.chain-index { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 999px; background: var(--panel-strong); font-weight: 800; }
+.chain-healthy { border-color: rgba(45, 182, 125, .35); }
+.chain-degraded { border-color: rgba(224, 168, 63, .45); }
+.chain-down { border-color: rgba(225, 86, 86, .45); }
+.chain-arrow { color: var(--muted); font-size: 22px; }
+.config-panel { padding: 24px; }
+.config-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 0; }
+.config-grid > div { padding: 15px; border: 1px solid var(--border); border-radius: 12px; background: var(--panel-soft); min-width: 0; }
+.config-grid dt { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+.config-grid dd { margin: 7px 0 0; font-weight: 700; overflow-wrap: anywhere; }
+@media (max-width: 1000px) { .config-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 680px) { .config-grid { grid-template-columns: 1fr; } .gateway-chain { align-items: center; } }

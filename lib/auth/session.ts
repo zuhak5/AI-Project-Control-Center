@@ -5,7 +5,7 @@ import { AppError } from "@/lib/errors";
 import { signValue, verifySignedValue } from "@/lib/crypto";
 import type { SessionPayload, SessionUser } from "@/lib/types";
 
-const SESSION_COOKIE = "aicc_session";
+const SESSION_COOKIE = "hpgc_session";
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 12;
 
 function sessionSecret(): string {

@@ -1,8 +1,8 @@
 {
-  "name": "ai-project-control-center",
-  "version": "1.0.0",
+  "name": "homepilot-ai-gateway-console",
+  "version": "2.0.0",
   "private": true,
-  "description": "A GitHub and Vercel-native control center for monitoring and operating AI-enabled projects.",
+  "description": "An end-to-end operations console for the HomePilot AI gateway deployed on Google Cloud VM, zrok, Nginx, and CLIProxyAPI.",
   "engines": {
     "node": "22.x"
   },

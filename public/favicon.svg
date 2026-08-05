@@ -2,5 +2,5 @@
   <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#aa9dff"/><stop offset="1" stop-color="#6f5de8"/></linearGradient></defs>
   <rect width="64" height="64" rx="17" fill="#0d111b"/>
   <rect x="8" y="8" width="48" height="48" rx="14" fill="url(#g)"/>
-  <path d="M20 43l8-23h8l8 23h-7l-1.4-5h-8L26 43h-6zm9.2-11h4.8l-2.3-8h-.2l-2.3 8z" fill="white"/>
+  <path d="M18 20h7v9h14v-9h7v24h-7v-9H25v9h-7V20z" fill="white"/>
 </svg>

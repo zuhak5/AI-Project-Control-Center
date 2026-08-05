@@ -1,13 +1,10 @@
 name: CI
-
 on:
   push:
     branches: [main]
   pull_request:
-
 permissions:
   contents: read
-
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -17,7 +14,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
       - name: Install dependencies
         run: npm install --no-audit --no-fund
       - name: Lint
@@ -30,4 +26,6 @@ jobs:
         env:
           SESSION_SECRET: ci-session-secret-with-more-than-thirty-two-characters
           DEV_BYPASS_AUTH: "true"
+          GATEWAY_BASE_URL: https://homepilot-ai.shares.zrok.io/v1
+          GATEWAY_MODEL: gpt-5.4-mini
         run: npm run build

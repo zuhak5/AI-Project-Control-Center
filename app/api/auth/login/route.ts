@@ -6,7 +6,7 @@ import { githubAuthorizeUrl } from "@/lib/auth/github";
 export async function GET(request: NextRequest) {
   const state = randomToken(24);
   const store = await cookies();
-  store.set("aicc_oauth_state", state, {
+  store.set("hpgc_oauth_state", state, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

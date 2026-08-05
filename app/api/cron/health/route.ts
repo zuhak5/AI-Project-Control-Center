@@ -1,29 +1,12 @@
-import { jsonError, jsonOk } from "@/lib/api";
 import { AppError } from "@/lib/errors";
-import { performHealthCheck } from "@/lib/providers";
+import { performHealthCheck } from "@/lib/gateway";
 import { appendHealthCheck, getState } from "@/lib/store";
 
-export const maxDuration = 300;
-
+export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
-  try {
-    const secret = process.env.CRON_SECRET;
-    if (!secret || request.headers.get("authorization") !== `Bearer ${secret}`) {
-      throw new AppError("Unauthorized cron invocation.", 401, "unauthorized_cron");
-    }
-
-    const state = await getState();
-    const projects = state.projects.filter((project) => project.enabled && project.healthCheck.enabled);
-    const results: Array<{ projectId: string; status: string }> = [];
-
-    for (const project of projects) {
-      const result = await performHealthCheck(project);
-      await appendHealthCheck(result.check, result.event);
-      results.push({ projectId: project.id, status: result.check.status });
-    }
-
-    return jsonOk({ checked: results.length, results });
-  } catch (error) {
-    return jsonError(error);
-  }
+  const secret = process.env.CRON_SECRET;
+  if (!secret) return Response.json({ ok: false, error: { code: "cron_not_configured", message: "CRON_SECRET is not configured." } }, { status: 500 });
+  if (request.headers.get("authorization") !== `Bearer ${secret}`) return Response.json({ ok: false, error: { code: "unauthorized", message: "Unauthorized." } }, { status: 401 });
+  try { const state = await getState(); const result = await performHealthCheck(state.settings); await appendHealthCheck(result.check, result.event); return Response.json({ ok: true, data: result.check }); }
+  catch (error) { const message = error instanceof AppError ? error.message : "Scheduled health check failed."; console.error(error); return Response.json({ ok: false, error: { code: "cron_failed", message } }, { status: 500 }); }
 }

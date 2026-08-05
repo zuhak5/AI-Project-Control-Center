@@ -1,30 +1,37 @@
 # Security policy
 
-## Reporting a vulnerability
+## Scope
 
-Do not disclose security vulnerabilities in a public issue. Contact the repository owner privately with the affected commit, reproduction steps, impact, and suggested mitigation.
+This application is a private operator console for one fixed Google Cloud VM gateway. It must not be repurposed to accept arbitrary provider URLs or browser-supplied credentials.
 
-## Secret handling
+## Secrets
 
-Never commit:
+The following values belong only in Vercel encrypted environment variables:
 
-- provider API keys;
-- GitHub OAuth client secrets;
-- `SESSION_SECRET`;
-- `CRON_SECRET`;
-- `BLOB_READ_WRITE_TOKEN`;
-- telemetry ingest tokens;
-- `.env` files containing values.
+- `CLIPROXY_API_KEY`
+- `HOME_GATEWAY_SECRET`
+- `SESSION_SECRET`
+- `GITHUB_CLIENT_SECRET`
+- `CRON_SECRET`
+- `BLOB_READ_WRITE_TOKEN`
 
-The application stores provider environment-variable names, not their values. Telemetry tokens are displayed once and retained only as hashes.
+Never commit, log, export, or paste these values into issues or chat messages.
 
-## Production checklist
+## Request restrictions
 
-- Use a private Vercel Blob store.
-- Set an exact `ALLOWED_GITHUB_LOGINS` list.
-- Generate a session secret with at least 32 random bytes.
-- Configure `AICC_ALLOWED_PROVIDER_HOSTS`.
-- Keep Vercel Git fork protection enabled.
-- Review Vercel Firewall and rate-limiting options before exposing high-volume telemetry endpoints.
-- Do not enable `DEV_BYPASS_AUTH` in production; production ignores it regardless.
-- Rotate provider keys after suspected disclosure and redeploy.
+The server validates that the configured gateway:
+
+- uses HTTPS;
+- has hostname `homepilot-ai.shares.zrok.io`;
+- uses base path `/v1`;
+- does not include user information, query parameters, or fragments;
+- does not follow redirects;
+- returns a bounded response body.
+
+## Stored data
+
+The Blob state contains settings, health checks, audit events, and sanitized request metadata. Prompts, system instructions, full responses, OAuth tokens, and gateway credentials are not stored.
+
+## Reporting
+
+Report suspected credential exposure privately. Rotate the affected value before investigating application logs or repository history.

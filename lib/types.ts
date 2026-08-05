@@ -1,44 +1,9 @@
-export type ProviderKind =
-  | "openai-responses"
-  | "anthropic-messages"
-  | "gemini-generate"
-  | "custom-json";
-
-export type EnvironmentKind = "development" | "staging" | "production" | "other";
 export type HealthStatus = "healthy" | "degraded" | "down" | "unknown";
-export type EventSource = "playground" | "health-check" | "telemetry";
+export type GatewayEventSource = "playground" | "health-check";
 
-export interface ProjectConfig {
+export interface GatewayEvent {
   id: string;
-  name: string;
-  description: string;
-  environment: EnvironmentKind;
-  provider: ProviderKind;
-  enabled: boolean;
-  baseUrl: string;
-  apiKeyEnv: string;
-  defaultModel: string;
-  allowedModels: string[];
-  tags: string[];
-  monthlyBudgetUsd: number | null;
-  healthCheck: {
-    enabled: boolean;
-    prompt: string;
-    expectedText: string;
-    timeoutMs: number;
-  };
-  telemetry: {
-    enabled: boolean;
-    ingestTokenHash: string | null;
-  };
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface UsageEvent {
-  id: string;
-  projectId: string;
-  source: EventSource;
+  source: GatewayEventSource;
   timestamp: string;
   status: "success" | "error";
   statusCode: number | null;
@@ -46,7 +11,6 @@ export interface UsageEvent {
   latencyMs: number;
   inputTokens: number;
   outputTokens: number;
-  estimatedCostUsd: number;
   requestId: string | null;
   errorCategory: string | null;
   note: string | null;
@@ -54,12 +18,12 @@ export interface UsageEvent {
 
 export interface HealthCheckResult {
   id: string;
-  projectId: string;
   timestamp: string;
   status: Exclude<HealthStatus, "unknown">;
   latencyMs: number;
   model: string;
   message: string;
+  statusCode: number | null;
 }
 
 export interface AuditEvent {
@@ -67,38 +31,34 @@ export interface AuditEvent {
   timestamp: string;
   actor: string;
   action: string;
-  resourceType: "project" | "settings" | "system";
-  resourceId: string | null;
   summary: string;
 }
 
-export interface ControlCenterSettings {
+export interface GatewaySettings {
+  healthPrompt: string;
+  expectedText: string;
+  timeoutMs: number;
+  maxOutputTokens: number;
   retentionDays: number;
-  currency: "USD";
-  defaultTimeoutMs: number;
-  telemetryEnabled: boolean;
 }
 
-export interface ControlCenterState {
-  version: 1;
-  projects: ProjectConfig[];
-  events: UsageEvent[];
+export interface GatewayState {
+  version: 2;
+  events: GatewayEvent[];
   healthChecks: HealthCheckResult[];
   auditLog: AuditEvent[];
-  settings: ControlCenterSettings;
+  settings: GatewaySettings;
   updatedAt: string;
 }
 
-export interface ProviderExecutionInput {
-  project: ProjectConfig;
+export interface GatewayExecutionInput {
   prompt: string;
   system?: string;
-  model?: string;
   maxOutputTokens?: number;
   temperature?: number;
 }
 
-export interface ProviderExecutionResult {
+export interface GatewayExecutionResult {
   text: string;
   model: string;
   latencyMs: number;

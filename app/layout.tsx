@@ -1,19 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./gateway.css";
 
 export const metadata: Metadata = {
-  title: {
-    default: "AI Project Control Center",
-    template: "%s · AI Project Control Center"
-  },
-  description: "A GitHub and Vercel-native operations dashboard for AI projects.",
+  title: { default: "HomePilot AI Gateway Console", template: "%s · HomePilot Gateway" },
+  description: "Private operations console for the HomePilot Google Cloud VM AI gateway.",
   robots: { index: false, follow: false }
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
-  );
+  return <html lang="en"><body>{children}</body></html>;
 }
