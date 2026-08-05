@@ -14,7 +14,10 @@ export function HealthButton() {
         const payload = await response.json().catch(() => null);
         if (!response.ok) { setState("error"); setMessage(payload?.error?.message ?? "Health check failed."); return; }
         setState("idle");
-        if (payload?.data?.telemetryStored === false) setMessage("Check completed, but the result could not be saved.");
+        const completedStatus = typeof payload?.data?.status === "string" ? payload.data.status : "completed";
+        setMessage(payload?.data?.telemetryStored === false
+          ? `Health check ${completedStatus}, but the result could not be saved.`
+          : `Health check ${completedStatus} and saved.`);
         router.refresh();
       } catch {
         setState("error"); setMessage("The browser could not reach the health-check API.");
