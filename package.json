@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "description": "An end-to-end operations console for the HomePilot AI gateway deployed on Google Cloud VM, zrok, Nginx, and CLIProxyAPI.",
-  "engines": { "node": "22.x" },
+  "engines": { "node": "24.x" },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
