@@ -1,4 +1,25 @@
-import { getGatewayReadiness, INFRASTRUCTURE } from "@/lib/gateway-config";
-import { getStorageMode, isPersistentStorageConfigured } from "@/lib/store";
+import packageJson from "@/package.json";
+import { getAuthReadiness } from "@/lib/auth/config";
+import { getGatewayReadiness } from "@/lib/gateway-config";
+import { isPersistentStorageConfigured } from "@/lib/store";
+
 export const dynamic = "force-dynamic";
-export async function GET() { const gateway = getGatewayReadiness(); return Response.json({ ok: true, service: "HomePilot AI Gateway Console", version: process.env.npm_package_version ?? "2.0.0", storageConfigured: isPersistentStorageConfigured(), storageMode: getStorageMode(), githubOAuthConfigured: Boolean(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET), cronConfigured: Boolean(process.env.CRON_SECRET), gatewayConfigured: gateway.gatewayConfigured, gatewayUrlValid: gateway.gatewayUrlValid, gatewayHost: gateway.gatewayUrlValid ? new URL(gateway.gatewayBaseUrl).hostname : "invalid", model: gateway.model, vm: { project: INFRASTRUCTURE.gcpProject, name: INFRASTRUCTURE.vmName, zone: INFRASTRUCTURE.zone }, timestamp: new Date().toISOString() }); }
+
+export async function GET() {
+  const gateway = getGatewayReadiness();
+  const auth = getAuthReadiness();
+  return Response.json({
+    ok: true,
+    service: "HomePilot AI Gateway Console",
+    version: packageJson.version,
+    storageConfigured: isPersistentStorageConfigured(),
+    appUrlValid: auth.appUrlValid,
+    githubOAuthConfigured: auth.githubOAuthConfigured,
+    allowlistConfigured: auth.allowlistConfigured,
+    cronConfigured: Boolean(process.env.CRON_SECRET?.trim()),
+    gatewayConfigured: gateway.gatewayConfigured,
+    gatewayUrlValid: gateway.gatewayUrlValid,
+    gatewayModelValid: gateway.modelValid,
+    timestamp: new Date().toISOString()
+  }, { headers: { "Cache-Control": "no-store, max-age=0", Pragma: "no-cache" } });
+}

@@ -2,11 +2,11 @@
 
 ## Scope
 
-This application is a private operator console for one fixed Google Cloud VM gateway. It must not be repurposed to accept arbitrary provider URLs or browser-supplied credentials.
+This application is a private operator console for one fixed Google Cloud VM gateway. It must not accept arbitrary provider URLs, browser-supplied credentials, or noncanonical OAuth origins.
 
 ## Secrets
 
-The following values belong only in Vercel encrypted environment variables:
+The following values belong only in Vercel Sensitive environment variables:
 
 - `CLIPROXY_API_KEY`
 - `HOME_GATEWAY_SECRET`
@@ -15,22 +15,38 @@ The following values belong only in Vercel encrypted environment variables:
 - `CRON_SECRET`
 - `BLOB_READ_WRITE_TOKEN`
 
-Never commit, log, export, or paste these values into issues or chat messages.
+Never commit, log, export, or paste these values into issues or chat messages. Gateway secrets are trimmed and rejected if they contain line breaks.
 
-## Request restrictions
+## Authentication and browser requests
 
-The server validates that the configured gateway:
+- OAuth redirects use `APP_BASE_URL`, not request host headers.
+- The OAuth callback state cookie is HTTP-only, SameSite=Lax, short-lived, and single-use.
+- Signed sessions have a bounded lifetime and are rechecked against `ALLOWED_GITHUB_LOGINS` on every request.
+- Playground, health, settings, and logout mutations require the canonical same origin.
+- JSON APIs require an appropriate JSON media type and bounded UTF-8 body size.
 
-- uses HTTPS;
+## Gateway restrictions
+
+The server validates that the gateway:
+
+- uses standard-port HTTPS;
 - has hostname `homepilot-ai.shares.zrok.io`;
 - uses base path `/v1`;
-- does not include user information, query parameters, or fragments;
+- contains no user information, query parameters, or fragments;
 - does not follow redirects;
-- returns a bounded response body.
+- returns a bounded JSON success body.
+
+Requests set `store: false`. Raw upstream error bodies are not returned to the browser or written to telemetry.
 
 ## Stored data
 
-The Blob state contains settings, health checks, audit events, and sanitized request metadata. Prompts, system instructions, full responses, OAuth tokens, and gateway credentials are not stored.
+The Blob state contains settings, health checks, audit events, and sanitized request metadata. It does not contain prompts, system instructions, full responses, OAuth tokens, or gateway credentials.
+
+Stored state is bounded and runtime-validated before use. Invalid records are discarded, timestamps are normalized, duplicate IDs are removed, and retention limits are applied. Local development writes use an atomic temporary-file rename.
+
+## Dependency and build controls
+
+CI performs a high-severity production dependency audit, lint with zero warnings, strict TypeScript checking, unit tests, and a production Next.js build. Patched PostCSS and sharp transitive versions are explicitly pinned while the application remains on stable Next.js.
 
 ## Reporting
 

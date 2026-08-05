@@ -65,8 +65,9 @@ export interface GatewayExecutionResult {
   inputTokens: number;
   outputTokens: number;
   requestId: string | null;
+  responseId: string | null;
+  responseStatus: string | null;
   statusCode: number;
-  raw: unknown;
 }
 
 export interface SessionUser {
