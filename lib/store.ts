@@ -1,6 +1,6 @@
 import "server-only";
 import { AppError } from "@/lib/errors";
-import { defaultGatewaySettings } from "@/lib/state-model";
+import { defaultGatewaySettings, emptyState } from "@/lib/state-model";
 import { BlobPreconditionFailedError, getStorageMode, isPersistentStorageConfigured, readState, writeState } from "@/lib/state-storage";
 import type { AuditEvent, GatewayEvent, GatewaySettings, GatewayState, HealthCheckResult } from "@/lib/types";
 
@@ -30,8 +30,28 @@ async function bestEffort(action: string, operation: () => Promise<void>): Promi
   catch (error) { console.error(`Best-effort ${action} persistence failed.`, error); return false; }
 }
 
+export interface StateSnapshot {
+  state: GatewayState;
+  storageReadable: boolean;
+  storageErrorCode: string | null;
+}
+
 export { getStorageMode, isPersistentStorageConfigured };
 export async function getState(): Promise<GatewayState> { return (await readState()).state; }
+export async function getStateSnapshot(): Promise<StateSnapshot> {
+  if (getStorageMode() === "unavailable") {
+    return { state: emptyState(), storageReadable: false, storageErrorCode: "storage_not_configured" };
+  }
+  try { return { state: (await readState()).state, storageReadable: true, storageErrorCode: null }; }
+  catch (error) {
+    console.error("Could not read gateway state; rendering a degraded read-only snapshot.", error);
+    return {
+      state: emptyState(),
+      storageReadable: false,
+      storageErrorCode: error instanceof AppError ? error.code : "storage_read_failed"
+    };
+  }
+}
 export async function getOperationalSettings(): Promise<GatewaySettings> {
   try { return (await readState()).state.settings; }
   catch (error) { console.error("Could not read operational settings; using safe defaults.", error); return defaultGatewaySettings(); }
