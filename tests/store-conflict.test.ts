@@ -73,12 +73,12 @@ describe("distributed Blob conflicts", () => {
       actor: "zuhak5",
       action: "settings.update",
       summary: "Test"
-    });
-    const assertion = expect(operation).rejects.toMatchObject({ code: "storage_conflict", status: 409 });
+    }).catch((error: unknown) => error);
 
     await vi.runAllTimersAsync();
-    await assertion;
+    const error = await operation;
 
+    expect(error).toMatchObject({ code: "storage_conflict", statusCode: 409 });
     expect(storage.writeState).toHaveBeenCalledTimes(7);
     expect(storage.writeState.mock.calls.every((call) => typeof call[1] === "string")).toBe(true);
   });
