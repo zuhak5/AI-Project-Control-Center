@@ -8,8 +8,8 @@ interface Result {
 }
 
 export function PlaygroundClient({ model, maxOutputTokens }: { model: string; maxOutputTokens: number }) {
-  const [prompt, setPrompt] = useState("Confirm the HomePilot Google Cloud AI gateway is responding, then summarize its request path in one paragraph.");
-  const [system, setSystem] = useState("Be concise and operationally precise.");
+  const [prompt, setPrompt] = useState("This request is being sent through the HomePilot gateway. Begin with exactly: Gateway request received successfully. Then summarize this fixed route in one concise paragraph: Vercel → zrok → Nginx → CLIProxyAPI → upstream AI. Do not claim that you independently inspected the infrastructure.");
+  const [system, setSystem] = useState("You are responding to an end-to-end gateway test. A successful response proves this request reached the configured upstream model through the application route. Be concise and operationally precise.");
   const [limit, setLimit] = useState(maxOutputTokens);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
