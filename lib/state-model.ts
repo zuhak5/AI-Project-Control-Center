@@ -1,36 +1,33 @@
-import type { ControlCenterState, ProjectConfig } from "@/lib/types";
+import type { GatewayState } from "@/lib/types";
 
 const MAX_EVENTS = 5000;
 const MAX_HEALTH_CHECKS = 1500;
 const MAX_AUDIT_EVENTS = 2000;
 
-export function emptyState(): ControlCenterState {
+export function emptyState(): GatewayState {
   return {
-    version: 1,
-    projects: [],
+    version: 2,
     events: [],
     healthChecks: [],
     auditLog: [],
-    settings: { retentionDays: 90, currency: "USD", defaultTimeoutMs: 30000, telemetryEnabled: true },
+    settings: {
+      healthPrompt: "Reply with exactly: OK",
+      expectedText: "OK",
+      timeoutMs: 30000,
+      maxOutputTokens: 800,
+      retentionDays: 90
+    },
     updatedAt: new Date().toISOString()
   };
 }
 
-function normalizeProject(value: unknown): ProjectConfig | null {
-  if (!value || typeof value !== "object") return null;
-  const input = value as ProjectConfig;
-  return typeof input.id === "string" && typeof input.name === "string" ? input : null;
-}
-
-export function normalizeState(value: unknown): ControlCenterState {
+export function normalizeState(value: unknown): GatewayState {
   if (!value || typeof value !== "object") return emptyState();
-  const input = value as Partial<ControlCenterState>;
+  const input = value as Partial<GatewayState> & { version?: number };
+  if (input.version !== 2) return emptyState();
   const fallback = emptyState();
   return {
-    version: 1,
-    projects: Array.isArray(input.projects)
-      ? input.projects.map(normalizeProject).filter((project): project is ProjectConfig => Boolean(project))
-      : [],
+    version: 2,
     events: Array.isArray(input.events) ? input.events : [],
     healthChecks: Array.isArray(input.healthChecks) ? input.healthChecks : [],
     auditLog: Array.isArray(input.auditLog) ? input.auditLog : [],
@@ -39,17 +36,9 @@ export function normalizeState(value: unknown): ControlCenterState {
   };
 }
 
-export function pruneState(state: ControlCenterState): void {
+export function pruneState(state: GatewayState): void {
   const cutoff = Date.now() - state.settings.retentionDays * 86400000;
-  state.events = state.events
-    .filter((event) => Date.parse(event.timestamp) >= cutoff)
-    .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
-    .slice(0, MAX_EVENTS);
-  state.healthChecks = state.healthChecks
-    .filter((check) => Date.parse(check.timestamp) >= cutoff)
-    .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
-    .slice(0, MAX_HEALTH_CHECKS);
-  state.auditLog = state.auditLog
-    .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp))
-    .slice(0, MAX_AUDIT_EVENTS);
+  state.events = state.events.filter((event) => Date.parse(event.timestamp) >= cutoff).sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp)).slice(0, MAX_EVENTS);
+  state.healthChecks = state.healthChecks.filter((check) => Date.parse(check.timestamp) >= cutoff).sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp)).slice(0, MAX_HEALTH_CHECKS);
+  state.auditLog = state.auditLog.sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp)).slice(0, MAX_AUDIT_EVENTS);
 }

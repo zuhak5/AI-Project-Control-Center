@@ -8,8 +8,8 @@ export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
   const state = request.nextUrl.searchParams.get("state");
   const store = await cookies();
-  const expectedState = store.get("aicc_oauth_state")?.value;
-  store.set("aicc_oauth_state", "", { path: "/", maxAge: 0 });
+  const expectedState = store.get("hpgc_oauth_state")?.value;
+  store.set("hpgc_oauth_state", "", { path: "/", maxAge: 0 });
 
   if (!code || !state || !expectedState || !safeEqual(state, expectedState)) {
     return NextResponse.redirect(new URL("/login?error=invalid_oauth_state", request.url));
