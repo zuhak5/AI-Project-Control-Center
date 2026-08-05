@@ -21,5 +21,5 @@ export default async function EventsPage({ searchParams }: { searchParams: Promi
       <button className="button secondary small" type="submit">Apply filters</button>
     </form>
     <section className="panel table-panel"><div className="panel-heading"><div><p className="eyebrow">Retained events</p><h2>{events.length} records</h2></div><span className="muted">No prompt or response bodies</span></div>{events.length ? <div className="table-scroll"><table><thead><tr><th>Timestamp</th><th>Source</th><th>Status</th><th>HTTP</th><th>Model</th><th>Latency</th><th>Input</th><th>Output</th><th>Request ID</th><th>Category</th></tr></thead><tbody>{events.slice(0, 500).map((event) => <tr key={event.id}><td>{formatDate(event.timestamp)}</td><td>{event.source}</td><td><span className={`event-status ${event.status}`}>{event.status}</span></td><td>{event.statusCode ?? "—"}</td><td>{event.model}</td><td>{formatDuration(event.latencyMs)}</td><td>{formatNumber(event.inputTokens)}</td><td>{formatNumber(event.outputTokens)}</td><td>{event.requestId ?? "—"}</td><td>{event.errorCategory ?? "—"}</td></tr>)}</tbody></table></div> : <p className="panel-empty">{snapshot.storageReadable ? "No events match the selected filters." : "Event history is unavailable while storage is degraded."}</p>}</section>
-  </div;
+  </div>;
 }
