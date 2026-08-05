@@ -56,7 +56,7 @@ export async function readState(): Promise<StateRead> {
   const mode = getStorageMode();
   if (mode === "blob-token" || mode === "blob-oidc") {
     try {
-      const result = await get(STATE_PATH, { access: "private" });
+      const result = await get(STATE_PATH, { access: "private", useCache: false });
       if (!result || result.statusCode !== 200 || !result.stream) return { state: emptyState() };
       return { state: parseState(await readBoundedStream(result.stream)), etag: result.blob.etag };
     } catch (error) {
