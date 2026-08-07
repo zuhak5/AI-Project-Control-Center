@@ -1,15 +1,15 @@
 import { AppError } from "@/lib/errors";
 
-export const VERIFIED_GATEWAY_HOST = "homepilot-ai.shares.zrok.io";
+export const VERIFIED_GATEWAY_HOST = "ai.safenetvpn.dedyn.io";
 export const DEFAULT_GATEWAY_BASE_URL = `https://${VERIFIED_GATEWAY_HOST}/v1`;
-export const DEFAULT_GATEWAY_MODEL = "gpt-5.4-mini";
+export const DEFAULT_GATEWAY_MODEL = "gpt-5.6-luna";
 
 export const INFRASTRUCTURE = {
   gcpProject: "myvpn-498108",
   vmName: "my-vpn-us-east1-20260601",
   zone: "us-east1-b",
   publicIp: "35.207.5.160",
-  zrokUrl: `https://${VERIFIED_GATEWAY_HOST}`,
+  caddyUrl: `https://${VERIFIED_GATEWAY_HOST}`,
   nginxLoopback: "127.0.0.1:8320",
   cliProxyLoopback: "127.0.0.1:8317"
 } as const;
@@ -31,7 +31,7 @@ export function getGatewayBaseUrl(): URL {
     throw new AppError("GATEWAY_BASE_URL must use HTTPS.", 500, "gateway_url_invalid");
   }
   if (url.hostname.toLowerCase() !== VERIFIED_GATEWAY_HOST || url.port) {
-    throw new AppError("GATEWAY_BASE_URL must use the verified HomePilot zrok origin on the standard HTTPS port.", 500, "gateway_url_invalid");
+    throw new AppError("GATEWAY_BASE_URL must use the verified HomePilot Caddy origin on the standard HTTPS port.", 500, "gateway_url_invalid");
   }
   if (url.username || url.password || url.search || url.hash) {
     throw new AppError("GATEWAY_BASE_URL cannot contain credentials, query parameters, or fragments.", 500, "gateway_url_invalid");
