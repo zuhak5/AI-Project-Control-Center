@@ -37,6 +37,6 @@ jobs:
           APP_BASE_URL: https://ai-project-control-center.vercel.app
           SESSION_SECRET: ci-session-secret-with-more-than-thirty-two-characters
           ALLOWED_GITHUB_LOGINS: zuhak5
-          GATEWAY_BASE_URL: https://homepilot-ai.shares.zrok.io/v1
-          GATEWAY_MODEL: gpt-5.4-mini
+          GATEWAY_BASE_URL: https://ai.safenetvpn.dedyn.io/v1
+          GATEWAY_MODEL: gpt-5.6-luna
         run: npm run build
