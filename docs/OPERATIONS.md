@@ -18,9 +18,9 @@ A check is `healthy` only when the gateway succeeds and its normalized response 
 |---|---|
 | `gateway_secret_missing` | Vercel gateway credential configuration |
 | `gateway_authentication_failed` | Nginx gateway secret or CLIProxyAPI bearer key rejected |
-| `gateway_route_not_found` | zrok target, Nginx route, or `/v1/responses` mismatch |
+| `gateway_route_not_found` | Caddy host/path, Nginx route, or `/v1/responses` mismatch |
 | `upstream_rate_limited` | upstream account rate limit |
-| `gateway_or_upstream_unavailable` | zrok, Nginx, CLIProxyAPI, or upstream outage |
+| `gateway_or_upstream_unavailable` | Caddy, Nginx, CLIProxyAPI, or upstream outage |
 | `gateway_timeout` | endpoint unavailable or upstream request stalled |
 | `gateway_invalid_json` | proxy returned HTML/text instead of Responses API JSON |
 | `gateway_empty_output` | successful payload contained no assistant text |
@@ -43,9 +43,12 @@ After restoring the Blob connection:
 
 ## VM services already configured
 
+- `caddy.service` — public TLS ingress for `ai.safenetvpn.dedyn.io` on ports 80/443.
 - `cliproxyapi.service` — enabled and active on `127.0.0.1:8317`.
 - Nginx security gateway — enabled and active on `127.0.0.1:8320`.
-- zrok agent/share — enabled and active for `homepilot-ai.shares.zrok.io`.
+- The old zrok share and zrok packages were removed and are not a fallback path.
+
+The public AI origin intentionally routes only `/v1/responses`. `/v1/models` and `/v1/chat/completions` return `404`.
 
 This repository does not execute VM administration commands. VM changes require a separate, explicitly authorized maintenance procedure.
 
