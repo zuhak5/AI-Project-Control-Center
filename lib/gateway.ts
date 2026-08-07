@@ -212,7 +212,7 @@ export async function performHealthCheck(settings: GatewaySettings): Promise<{ c
     const matches = !expected || normalizedHealthText(result.text) === expected;
     const healthy = completed && matches;
     const message = healthy
-      ? "The complete Vercel → zrok → Nginx → CLIProxyAPI → upstream path responded exactly as expected."
+      ? "The complete Vercel → Caddy → Nginx → CLIProxyAPI → upstream path responded exactly as expected."
       : !completed ? `The gateway returned Responses API status ${result.responseStatus}.`
         : "The gateway responded, but its normalized text did not exactly match the expected health text.";
     return {
