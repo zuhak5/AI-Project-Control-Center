@@ -12,4 +12,4 @@ npm test
 npm run build
 ```
 
-Do not add arbitrary provider URLs, provider selectors, client-side secrets, prompt persistence, or direct browser access to the zrok endpoint. Keep all gateway calls server-side.
+Do not add arbitrary provider URLs, provider selectors, client-side secrets, prompt persistence, or direct browser access to the Caddy gateway endpoint. Keep all gateway calls server-side.
