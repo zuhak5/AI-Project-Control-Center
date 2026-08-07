@@ -6,14 +6,14 @@ Every model request follows one fixed route:
 
 ```text
 Vercel console
-  -> https://homepilot-ai.shares.zrok.io/v1/responses
-  -> zrok reserved public share
+  -> https://ai.safenetvpn.dedyn.io/v1/responses
+  -> Caddy on the Google Cloud VM
   -> Nginx security gateway on 127.0.0.1:8320
   -> CLIProxyAPI on 127.0.0.1:8317
   -> configured upstream AI account
 ```
 
-The console does not modify the VM, WireGuard, firewall, routes, Caddy, zrok reservation, Nginx, or CLIProxyAPI services.
+The console does not modify the VM, WireGuard, firewall, routes, Caddy, Nginx, or CLIProxyAPI services.
 
 ## What the console provides
 
@@ -42,13 +42,15 @@ GITHUB_CLIENT_SECRET=<GitHub OAuth App client secret>
 CRON_SECRET=<random value, at least 16 characters>
 CLIPROXY_API_KEY=<existing CLIProxyAPI bearer key>
 HOME_GATEWAY_SECRET=<existing Nginx gateway secret>
-GATEWAY_BASE_URL=https://homepilot-ai.shares.zrok.io/v1
-GATEWAY_MODEL=gpt-5.4-mini
+GATEWAY_BASE_URL=https://ai.safenetvpn.dedyn.io/v1
+GATEWAY_MODEL=gpt-5.6-luna
 ```
 
 Connect the private Vercel Blob store so `BLOB_STORE_ID` or `BLOB_READ_WRITE_TOKEN` is available. Mark all credential values Sensitive. Redeploy after every environment-variable change.
 
 `APP_BASE_URL` is the canonical production origin used for OAuth redirects and same-origin checks. It must use HTTPS and must not contain a path, query, fragment, credentials, or nonstandard port.
+
+The gateway origin is intentionally fixed to the direct Caddy host. The public VM route exposes only `POST /v1/responses`; `/v1/models` and `/v1/chat/completions` remain closed.
 
 ## GitHub OAuth App
 
@@ -80,7 +82,7 @@ For example, expected text `OK` does not accept `NOT OK`.
 
 - Secrets are read only in Vercel server functions.
 - Provider-side response storage is explicitly disabled with `store: false`.
-- The gateway origin is restricted to standard HTTPS on `homepilot-ai.shares.zrok.io`.
+- The gateway origin is restricted to standard HTTPS on `ai.safenetvpn.dedyn.io`.
 - The gateway base path must be `/v1`; redirects are rejected.
 - Request and stored-state bodies are size-limited.
 - Persisted state is runtime-validated and malformed entries are discarded.
