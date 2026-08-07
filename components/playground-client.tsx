@@ -8,7 +8,7 @@ interface Result {
 }
 
 export function PlaygroundClient({ model, maxOutputTokens }: { model: string; maxOutputTokens: number }) {
-  const [prompt, setPrompt] = useState("This request is being sent through the HomePilot gateway. Begin with exactly: Gateway request received successfully. Then summarize this fixed route in one concise paragraph: Vercel → zrok → Nginx → CLIProxyAPI → upstream AI. Do not claim that you independently inspected the infrastructure.");
+  const [prompt, setPrompt] = useState("This request is being sent through the HomePilot gateway. Begin with exactly: Gateway request received successfully. Then summarize this fixed route in one concise paragraph: Vercel → Caddy → Nginx → CLIProxyAPI → upstream AI. Do not claim that you independently inspected the infrastructure.");
   const [system, setSystem] = useState("You are responding to an end-to-end gateway test. A successful response proves this request reached the configured upstream model through the application route. Be concise and operationally precise.");
   const [limit, setLimit] = useState(maxOutputTokens);
   const [busy, setBusy] = useState(false);
@@ -30,7 +30,7 @@ export function PlaygroundClient({ model, maxOutputTokens }: { model: string; ma
         setError("The browser could not reach the console API. Check the network and retry.");
       } finally { setBusy(false); }
     }}>
-      <div className="field span-2"><label>Fixed route</label><input value="Vercel → zrok → Nginx → CLIProxyAPI → upstream AI" readOnly /></div>
+      <div className="field span-2"><label>Fixed route</label><input value="Vercel → Caddy → Nginx → CLIProxyAPI → upstream AI" readOnly /></div>
       <div className="field"><label>Model</label><input value={model} readOnly /></div>
       <div className="field"><label htmlFor="limit">Maximum output tokens</label><input id="limit" type="number" min="16" max="8000" value={limit} disabled={busy} onChange={(event) => setLimit(Number(event.target.value))} /></div>
       <div className="field span-2"><label htmlFor="system">System instructions</label><textarea id="system" rows={4} value={system} disabled={busy} onChange={(event) => setSystem(event.target.value)} /></div>
