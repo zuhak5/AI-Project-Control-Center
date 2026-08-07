@@ -30,11 +30,13 @@ Never commit, log, export, or paste these values into issues or chat messages. G
 The server validates that the gateway:
 
 - uses standard-port HTTPS;
-- has hostname `homepilot-ai.shares.zrok.io`;
+- has hostname `ai.safenetvpn.dedyn.io`;
 - uses base path `/v1`;
 - contains no user information, query parameters, or fragments;
 - does not follow redirects;
 - returns a bounded JSON success body.
+
+The public Caddy origin itself is hardened to route only `POST /v1/responses`; `/v1/models`, `/v1/chat/completions`, and unrelated paths are not exposed to this application.
 
 Requests set `store: false`. Raw upstream error bodies are not returned to the browser or written to telemetry.
 
