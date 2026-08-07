@@ -3,7 +3,7 @@ import type { HealthStatus } from "@/lib/types";
 
 const nodes = [
   { label: "Vercel", detail: "Authenticated server function" },
-  { label: "zrok", detail: "homepilot-ai.shares.zrok.io" },
+  { label: "Caddy", detail: "ai.safenetvpn.dedyn.io" },
   { label: "Nginx", detail: INFRASTRUCTURE.nginxLoopback },
   { label: "CLIProxyAPI", detail: INFRASTRUCTURE.cliProxyLoopback },
   { label: "Upstream AI", detail: "Configured account and model" }
