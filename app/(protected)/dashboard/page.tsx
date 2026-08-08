@@ -25,7 +25,7 @@ export default async function DashboardPage() {
   const storageReady = isPersistentStorageConfigured() && snapshot.storageReadable;
 
   return <div className="page-wrap">
-    <PageHeader eyebrow="Google Cloud VM gateway" title="HomePilot AI gateway operations" description="One fixed request path from Vercel through zrok, Nginx, CLIProxyAPI, and the configured upstream AI account." actions={<><a className="button secondary" href="/api/export">Export data</a><HealthButton /></>} />
+    <PageHeader eyebrow="Google Cloud VM gateway" title="HomePilot AI gateway operations" description="One fixed request path from Vercel through Caddy, Nginx, CLIProxyAPI, and the configured upstream AI account." actions={<><a className="button secondary" href="/api/export">Export data</a><HealthButton /></>} />
     {!snapshot.storageReadable ? <p className="alert warning" role="status">Historical state is temporarily unavailable ({snapshot.storageErrorCode}). Gateway requests and health probes can still run with safe default settings, but new telemetry may not be retained.</p> : null}
 
     <section className="metric-grid">
